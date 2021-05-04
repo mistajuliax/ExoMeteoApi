@@ -1,0 +1,4 @@
+
+city = "rennes"
+country = "fr"
+
