@@ -2,9 +2,18 @@ import web
 import json
 import requests
 import re
+import os
+import config
+
+from os.path import join, dirname
 
 from dotenv import load_dotenv
 load_dotenv()
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
+API_KEY=os.environ.get("KEY")
 
 
 #r = requests.get('https://api.openweathermap.org/data/2.5/weather?zip=35000,fr&appid=5ed01d65b56978f73d7aaa52dc47682f')
@@ -19,11 +28,8 @@ urls = (
 
 
 #config
-url = "https://api.openweathermap.org/data/2.5/weather?q="
-city = "rennes"
-country = "fr"
+url = "https://api.openweathermap.org/data/2.5/weather?zip="
 
-apikey = "5ed01d65b56978f73d7aaa52dc47682f"
 
 app = web.application(urls, globals())
 
@@ -35,11 +41,17 @@ class Weather:
         print(params)
         data = requests.get(url + city + ',' + country + '&appid=' + apikey)
         w = {
-            'temperature': data.get('main')('temp'),
-            'weather': data.get('weather').get(0).get('main'),
-            'temperature min ': data.get('main').get('temp_min'),
-            'temperature max': data.get('main').get('temp_max')
+            'temperature': str(data.get('main').get('temp')),
+            'weather': str(data.get('weather').get(0).get('main')),
+            'tempMin': str(data.get('main').get('temp_min')),
+            'tempMax': str(data.get('main').get('temp_max'))
         }
+        # w = {
+        #     'temperature': data.get('main')('temp'),
+        #     'weather': data.get('weather').get(0).get('main'),
+        #     'temperature min ': data.get('main').get('temp_min'),
+        #     'temperature max': data.get('main').get('temp_max')
+        # }
         return json.dumps(w)
 
 
