@@ -1,0 +1,52 @@
+import web
+import json
+import requests
+import re
+import config
+import os
+import dotenv
+from dotenv import load_dotenv
+load_dotenv()
+
+
+apikey = os.environ.get("APIKEY")
+#routing
+urls = (
+    '/weather?', 'Weather',
+    '/(.*)', 'Zipcode'
+)
+
+
+app = web.application(urls, globals())
+
+
+class Weather:
+    def GET(self):
+        web.header('Content-type', 'application/json')
+        req = requests.get(config.url + config.zip + '=' + ',' + config.country + '&appid=' + apikey)
+        jdata = req.json()
+
+        w = {}
+        w["weather"] = str(jdata["weather"][0]["main"])
+        w["temperature"] = round(float(jdata["main"]["temp"]))
+        w["tempMin"] = round(float(jdata["main"]["temp_min"]))
+        w["tempMax"] = round(float(jdata["main"]["temp_max"]))
+
+        return json.dumps(w)
+
+
+# class Zipcode:
+#     def GET(self, params):
+#         params = re.findall('([a-zA-Z]*)=([a-zA-Z0-9]*)', web.ctx.query)
+#         print(params)
+#         return 'Invalid Regular expression'
+#
+#     def GET(self, params, rep):
+#         if len(params) == 5:
+#             rep.status = '200 ok'
+#         else:
+#             raise Exception('Zipcode is too short')
+
+
+if __name__ == "__main__":
+    app.run()
