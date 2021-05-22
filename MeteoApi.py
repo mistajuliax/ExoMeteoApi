@@ -2,24 +2,22 @@ import web
 import json
 import requests
 import re
-import os
 import config
-
-from os.path import join, dirname
-
+import os
+import dotenv
 from dotenv import load_dotenv
 load_dotenv()
-
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-
-API_KEY=os.environ.get("KEY")
+from furl import furl
+f = furl("/weather?zipcode='(./*){5}'")
+print(f.args['zipcode'])
 
 
-#r = requests.get('https://api.openweathermap.org/data/2.5/weather?zip=35000,fr&appid=5ed01d65b56978f73d7aaa52dc47682f')
-#print(r.json())
+import urllib.parse as urlparse
+#from urllib.parse import urlparse
+from urllib.parse import parse_qs
 
 
+apikey = os.environ.get("APIKEY")
 #routing
 urls = (
     '/weather?', 'Weather',
@@ -27,42 +25,46 @@ urls = (
 )
 
 
-#config
-url = "https://api.openweathermap.org/data/2.5/weather?zip="
-
-
 app = web.application(urls, globals())
 
-
-class Weather:
-    def GET(self):
-        web.header('Content-type', 'application/json')
-        params = re.findall('([a-zA-Z]*)=([a-zA-Z0-9]*)', web.ctx.query)
-        print(params)
-        data = requests.get(url + city + ',' + country + '&appid=' + apikey)
-        w = {
-            'temperature': str(data.get('main').get('temp')),
-            'weather': str(data.get('weather').get(0).get('main')),
-            'tempMin': str(data.get('main').get('temp_min')),
-            'tempMax': str(data.get('main').get('temp_max'))
-        }
-        # w = {
-        #     'temperature': data.get('main')('temp'),
-        #     'weather': data.get('weather').get(0).get('main'),
-        #     'temperature min ': data.get('main').get('temp_min'),
-        #     'temperature max': data.get('main').get('temp_max')
-        # }
-        return json.dumps(w)
+url = 'localhost:8080/weather?zipcode=[(./*){5}]'
+parsed = urlparse.urlparse(url)
+print(parse_qs(parsed.query)['zipcode'])
 
 
-class Zipcode:
-    def GET(self, param):
-        return 'Invalid Regular expression'
-    # def __init__(self, params, rep):
-    #     if len(params) == 5:
-    #         rep.status = '200 ok'
-    #     else:
-    #         raise Exception('Zipcode is too short')
+# parsed = urlparse("localhost:8080/weather?zipcode=/")
+# zipcode = parsed.query.get
+
+# class Weather:
+#     def GET(self):
+#         web.header('Content-type', 'application/json')
+#         req = requests.get(config.url + zipcode +  ',' + config.country + '&appid=' + apikey)
+#         jdata = req.json()
+#
+#         w = {}
+#         w["weather"] = str(jdata["weather"][0]["main"])
+#         w["temperature"] = round(float(jdata["main"]["temp"]))
+#         w["tempMin"] = round(float(jdata["main"]["temp_min"]))
+#         w["tempMax"] = round(float(jdata["main"]["temp_max"]))
+#
+#         return json.dumps(w)
+
+
+# class Zipcode:
+#
+#     def GET(self, params,rep):
+#         params = re.findall('([a-zA-Z]*)=([a-zA-Z0-9]*)', web.ctx.query)
+#         return 'Invalid Regular expression'
+#
+#         if len(params) == 5:
+#             rep.status = '200 ok'
+#             return params
+#         else:
+#             raise Exception('Zipcode is not valid')
+#
+#     def getZipcode(self,zip):
+#         params = '/(.*){5}'
+#         return zip(self)
 
 
 if __name__ == "__main__":
