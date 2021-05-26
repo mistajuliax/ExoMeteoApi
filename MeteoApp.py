@@ -29,14 +29,22 @@ def tempdata(data):
     return data
 
 
+def checkzip(zip):
+    if len(zip) == 5:
+        return zip
+    else:
+        return "zipcode is not valid"
+
+
 class Zipcode:
     def GET(self, zipcode):
         web.header('Content-type', 'application/json')
         web.header('charset', 'utf-8')
 
-        req = requests.get(config.url + zipcode + ',' + config.country + '&appid=' + apikey)
+        req = requests.get(config.url + checkzip(zipcode) + ',' + config.country + '&appid=' + apikey)
 
         jdata = req.json()
+        print(jdata)
         k = 275
         weather = str(jdata["weather"][0]["main"])
 
@@ -70,9 +78,6 @@ class Zipcode:
         }
         return json.dumps(w)
 
-
-
-
     # def GET(self):
     #     print(web.ctx.query)
     #     params = re.findall('([a-zA-Z]*)=([a-zA-Z0-9]{5})', web.ctx.query)
@@ -102,7 +107,6 @@ class Zipcode:
 #         else:
 #             return 'Zipcode is not valid'
 
-
     # def GET(self):
     #     print(web.ctx.query)
     #     params = re.findall('([a-zA-Z]*)=([a-zA-Z0-9]{5)
@@ -112,8 +116,6 @@ class Zipcode:
     #                 return zipcode
     #     else:
     #         return 'Zipcode is not valid'
-
-
 
 if __name__ == "__main__":
     app.run()
