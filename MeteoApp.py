@@ -44,7 +44,7 @@ class Zipcode:
         req = requests.get(config.url + checkzip(zipcode) + ',' + config.country + '&appid=' + apikey)
 
         jdata = req.json()
-        print(jdata)
+        #print(jdata)
         k = 275
         weather = str(jdata["weather"][0]["main"])
 
