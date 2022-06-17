@@ -22,18 +22,12 @@ app = web.application(urls, globals())
 
 
 def tempdata(data):
-    if data == 1 or data == 0 or data == -1:
-        data = str(data) + " degré"
-    else:
-        data = str(data) + " degrés"
+    data = f"{str(data)} degré" if data in [1, 0, -1] else f"{str(data)} degrés"
     return data
 
 
 def checkzip(zip):
-    if len(zip) == 5:
-        return zip
-    else:
-        return "zipcode is not valid"
+    return zip if len(zip) == 5 else "zipcode is not valid"
 
 
 class Zipcode:
